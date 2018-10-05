@@ -1,0 +1,126 @@
+{% extends 'layout.html' %} {% block body %}
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content details-modal">
+  
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Dynamical control Workshop</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+  
+            <!-- Modal body -->
+            <div class="modal-body">
+              <h5>17 March to 21 March 2014</h5>
+              <p>
+                Perspectives in Dynamically involved material, with each speaker presented his/her perspective on the
+                subject. Amongst others, the topics of the talks included pattern generation and nonlinear control, geometry
+                of collective control and dynamics, numerical issues in nonlinear control, control of mechanical systems.
+              </p>
+              <h5>Objectives</h5>
+              <ul>
+                <li>Establish international linkages & cooperative partnership in the thematic area of complex & nonlinear
+                  dynamical systems.</li>
+                <li>Upgradation of research knowledge and research competence.</li>
+                <li>International exchange of credits, faculty & students.</li>
+                <li>Joint publications, research proposals.</li>
+              </ul>
+              <h5>Resource Persons</h5>
+              <ul>
+                <li>Roger W. Brockett ,Harvard School of Engineering and Applied Sciences</li>
+                <li>D. E. Chang, University of Waterloo, Canada</li>
+                <li>Prof. A. J. Krener, UC DAVIS University of California</li>
+                <li>Prof. Tudor Ratiu, Geometrical Analysis EPFL, Switzerland</li>
+              </ul>
+            </div>
+  
+            <!-- Modal footer -->
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>data-toggle="modal" data-target="#myModal" -->
+  
+          </div>
+        </div>
+      </div>
+
+
+<h4 class="text-right"> Welcome {{session.username}}</h4>
+<!-- <a class="btn btn-success" href="/add_article"> Add Article</a> -->
+<h2 class="text-right" style="color: #00FF00">Total Applicants: 243</h2>
+
+<div class="card btn-primary-outline">
+  <div class="card-body">
+    <h1>Analyze</h1>
+    <form>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="rate">No. of people needed</label>
+            <span id="rate-value" class="label bg-primary px-3 rounded float-right">1</span>
+            <input type="range" id="rate" class="custom-range" min="0.5" max="2" value="1" step="0.1">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="pitch">Experience in years</label>
+            <div id="pitch-value" class="label bg-primary px-3 rounded float-right">1</div>
+            <input type="range" id="pitch" class="custom-range" min="0" max="2" value="1" step="0.1">
+          </div>
+        </div>
+      </div>
+      <h3>Filters</h3>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+        <label class="form-check-label" for="inlineCheckbox1">Software Developer</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+        <label class="form-check-label" for="inlineCheckbox2">Big Data Engineer</label>
+      </div>
+      <br>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+        <label class="form-check-label" for="inlineCheckbox3">Sales & Marketing</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+        <label class="form-check-label" for="inlineCheckbox3">Accounting & Finance</label>
+      </div>
+      <!-- <div class="form-group">
+        <select id="voice-select" class="form-control form-control-lg"></select>
+      </div> -->
+      <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Advanced</a>
+
+      <button class="btn btn-primary btn-lg float-right">Analyze</button>
+      <hr>
+      <div class="form-group mt-5">
+        <textarea name="" id="text-input" class="form-control form-control-lg" placeholder="Acceptance Message..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-lg  float-right">Send Mails</button>
+    </form>
+  </div>
+</div>
+
+<hr>
+<h2>Results</h2>
+<table class="table table-dark table-striped table-hover">
+  <tr>
+    <th>No.</th>
+    <th>Name</th>
+    <th>Contact</th>
+    <th>Email</th>
+    <th>Calculated Score</th>
+  </tr>
+  {% for article in articles %}
+  <tr>
+    <td>{{article.id}}</td>
+    <td>{{article.title}}</td>
+    <td>{{article.create_date}}</td>
+    <td><a href="edit_article/{{article.id}}" class="btn btn-default pull-right">someone@example.com</a></td>
+    <td class="ml-2 text-success">94<a href="edit_article/{{article.id}}" class="btn btn-default pull-right">view details</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

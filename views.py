@@ -138,6 +138,24 @@ def dashboard():
 		return render_template('dashboard.html', msg=msg)
 	# Close connection
 	cur.close()
+
+ # Analyze
+@app.route('/analyze')
+@is_logged_in
+def analyze():
+	# Create cursor
+	cur = mysql.connection.cursor()
+ 	# Get articles
+	result = cur.execute("SELECT * FROM articles WHERE author=%s", (session['username'],))
+ 	articles = cur.fetchall()
+ 	if result > 0:
+		return render_template('analyze.html', articles=articles)
+	else:
+		msg = 'No Articles Found'
+		return render_template('analyze.html', msg=msg)
+	# Close connection
+	cur.close()
+
  # Add Article
 @app.route('/add_article', methods=['GET', 'POST'])
 @is_logged_in
