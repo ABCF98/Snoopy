@@ -91,6 +91,20 @@ def login():
 			error = 'Username not found'
 			return render_template('login.html', error=error)
  	return render_template('login.html')
+
+ # Apply
+@app.route('/apply', methods=['GET', 'POST'])
+def apply():
+	if request.method == 'POST':
+		# Get Form Fields (not using WTForms)
+		# resume = request.form['resume']
+		github_username = request.form['github_username']
+		flash('Successfully Uploaded '+str(github_username), 'success')
+ 		return render_template('apply.html')
+ 	return render_template('apply.html')
+
+
+
  # Check if user logged in
 def is_logged_in(f):
 	@wraps(f)
