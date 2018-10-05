@@ -4,6 +4,9 @@ from passlib.hash import sha256_crypt
 from functools import wraps
 #from models import Member
 from forms import RegisterForm, ArticleForm
+import os
+from werkzeug.utils import secure_filename
+
  # @app.route('/')
 # def index():
 # 	firstmember = Member.query.first()
@@ -92,12 +95,22 @@ def login():
 			return render_template('login.html', error=error)
  	return render_template('login.html')
 
- # Apply
+# Apply
+ALLOWED_EXTENSIONS = set(['pdf'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
 	if request.method == 'POST':
 		# Get Form Fields (not using WTForms)
 		# resume = request.form['resume']
+		file = request.files['file']
+		filename = secure_filename(file.filename)
+		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
 		github_username = request.form['github_username']
 		flash('Successfully Uploaded '+str(github_username), 'success')
  		return render_template('apply.html')
