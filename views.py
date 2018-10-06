@@ -99,21 +99,31 @@ def login():
 ALLOWED_EXTENSIONS = set(['pdf'])
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
 	if request.method == 'POST':
 		# Get Form Fields (not using WTForms)
 		# resume = request.form['resume']
-		file = request.files['file']
-		filename = secure_filename(file.filename)
-		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
 		github_username = request.form['github_username']
-		flash('Successfully Uploaded '+str(github_username), 'success')
- 		return render_template('apply.html')
+		if github_username == '':
+			flash('Please enter your github username', 'danger')
+			return render_template('apply.html')
+		if 'file' not in request.files:
+			flash('Please upload your resume', 'danger')
+			return render_template('apply.html')
+		file = request.files['file']
+		if file.filename == '':
+			flash('Please upload your resume', 'danger')
+			return render_template('apply.html')
+		if file and allowed_file(file.filename):
+			filename = secure_filename(file.filename)
+			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+			# insert into db
+			flash('Successfully Uploaded '+str(github_username), 'success')
+		else:
+			flash('Please upload a valid format', 'danger')
  	return render_template('apply.html')
 
 
