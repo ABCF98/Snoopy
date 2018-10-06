@@ -334,7 +334,7 @@ def apply():
 			print(numRepos)'''
 			
 			'''user_performance_graph(ssc[x],hsc[x],cpi[x],followers,numRepos,name)'''
-			cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skillA)+"','"+str(skillB)+"','"+str(skillC)+"','"+str(skillD)+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0',0,0,'0',0)") 
+			cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skillA)+"','"+str(skillB)+"','"+str(skillC)+"','"+str(skillD)+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0','"+str(followers)+"','"+str(numRepos)+"','0',0)") 
 			cur1.execute("commit")
 			flash("INSERTED")
 			
@@ -377,7 +377,7 @@ def dashboard():
 	# Create cursor
 	cur = mysql.connection.cursor()
  	# Get articles
-	cur.execute("select name,email,phone from candidate_details")
+	cur.execute("select name,email,phone,no_of_repo,no_of_followers from candidate_details")
  	articles = cur.fetchall()
  	if articles > 0:
 		return render_template('dashboard.html', articles=articles)
