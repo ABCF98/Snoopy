@@ -17,6 +17,7 @@ import os
 import pygal
 import numpy as np
 import matplotlib.pyplot as plt
+import requests
 from matplotlib.backends.backend_pdf import PdfPages
 
 import csv
@@ -103,7 +104,7 @@ def getdata(filename):
     resume_string = resume_string.lower()
     tokens = word_tokenize(resume_string1)
     name.append(tokens[0] +" "+ tokens[1])
-    print(name[0])
+    
 
     y = extract_phone_numbers(resume_string)
     y1 = []
@@ -111,11 +112,10 @@ def getdata(filename):
         if(len(y[i])>9):
             y1.append(y[i])
     phone_number.append(y1[0])
-    print(phone_number[0])
     
 
     email.append(extract_email_addresses(resume_string)[0])
-    print(email[0])
+    
 
     scores=extract_decimals(resume_string)
 
@@ -146,6 +146,7 @@ def getStatistics(string,field):
     print(skills[0])
     print "The hit parameters are:"
     print paraList
+    return hits
 
 
 
@@ -248,8 +249,21 @@ ALLOWED_EXTENSIONS = set(['pdf'])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-
+def gitRepoCount(username):
+	url = "https://api.github.com/users/"+ username +"/repos"
+	r = requests.get(url)
+	data = r.json()
+	return len(data)
+def gitFollower(username):
+	url = "https://api.github.com/users/"+ username
+	r = requests.get(url)
+	data = r.json()
+	return data['followers']
+def gitLocation(username):
+	url = "https://api.github.com/users/"+ username
+	r = requests.get(url)
+	data = r.json()
+	return data['location']
 
 def pdf_folder(foldername):
     for file in os.listdir(foldername):
@@ -258,16 +272,22 @@ def pdf_folder(foldername):
             
 
 
-def user_performance_graph():
+def user_performance_graph(ssc,hsc,cpi,followers,repos,name):
     my_path = '.'
-    with PdfPages(my_path + '/allpdf/multipage.pdf') as pdf:
+    with PdfPages(my_path + '/allpdf/' +str(name) + '.pdf') as pdf:
         given_title="user's performance"
-        y_axis=[6,98,95,9,10,15]
-        x_axis=['Github Repo','SSC','HSC','CPI','No of Projects','No of Skills']
+        y_axis=[]
+        y_axis.append(repos)
+        y_axis.append(hsc)
+        y_axis.append(cpi)
+        y_axis.append(followers)
+        
+        x_axis=['GIT REPOSITORIES','HSC','CPI','GIT FOLLOWERS']
         ind=np.arange(len(x_axis))
         plt.bar(ind,y_axis)
         plt.xticks(ind,x_axis)
         plt.title(given_title,color='r')
+        plt.rcParams['figure.figsize']=(10,6)
         pdf.savefig()
 
 @app.route('/apply', methods=['GET', 'POST'])
@@ -293,12 +313,28 @@ def apply():
 			foldername="/home/prachiti/Desktop/EventApp/Snoopy/pdfFolder/"
 			getdata(foldername+filename)
 			pdf_text=convert(foldername+filename)
-			getStatistics(pdf_text, "techAtt")
+			skillA = getStatistics(pdf_text, "techAtt")
+			skillB = getStatistics(pdf_text, "bdAtt")
+			skillC = getStatistics(pdf_text, "samAtt")
+			skillD = getStatistics(pdf_text, "afAtt")
+			'''location = gitLocation(github_username)
+			followers = gitFollower(github_username)
+			numRepos = gitRepoCount(github_username)'''
 
+			print(cpi[0])
 			cur = mysql.connection.cursor()
 			cur1 = mysql.connection.cursor()
 			x=0
-			cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skills[x])+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0',0,'0')")
+			print(skillA)
+			print(skillB)
+			print(skillC)
+			print(skillD)
+			'''print(location)
+			print(followers)
+			print(numRepos)'''
+			
+			'''user_performance_graph(ssc[x],hsc[x],cpi[x],followers,numRepos,name)'''
+			cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skillA)+"','"+str(skillB)+"','"+str(skillC)+"','"+str(skillD)+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0',0,0,'0',0)") 
 			cur1.execute("commit")
 			flash("INSERTED")
 			
