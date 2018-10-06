@@ -7,11 +7,158 @@ from forms import RegisterForm, ArticleForm
 import os
 from werkzeug.utils import secure_filename
 
- # @app.route('/')
+import PyPDF2
+import textract
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import re
+from flask_mysqldb import MySQL
+import os
+import pygal
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
+import csv
+import re
+import spacy
+from nltk.tokenize import word_tokenize
+import sys
+reload(sys)
+import pandas as pd
+sys.setdefaultencoding('utf8')
+from cStringIO import StringIO
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfpage import PDFPage
+import sys, getopt
+import numpy as np
+from bs4 import BeautifulSoup
+import urllib2
+from urllib2 import urlopen
+
+
+#prachiti's code
+#Function converting pdf to string
+def convert(fname, pages=None):
+    if not pages:
+        pagenums = set()
+    else:
+        pagenums = set(pages)
+
+    output = StringIO()
+    manager = PDFResourceManager()
+    converter = TextConverter(manager, output, laparams=LAParams())
+    interpreter = PDFPageInterpreter(manager, converter)
+
+    infile = file(fname, 'rb')
+    for page in PDFPage.get_pages(infile, pagenums):
+        interpreter.process_page(page)
+    infile.close()
+    converter.close()
+    text = output.getvalue()
+    output.close
+    return text
+
+    
+def extract_phone_numbers(string):
+    r = re.compile(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})')
+    phone_numbers = r.findall(string)
+    return [re.sub(r'\D', '', number) for number in phone_numbers]
+#Function to extract Email address from a string using regular expressions
+def extract_email_addresses(string):
+    r = re.compile(r'[\w\.-]+@[\w\.-]+')
+    return r.findall(string)
+def extract_decimals(string):
+    r = re.compile(r"\d+\.\d+\d")
+    return r.findall(string)
+
+#Converting pdf to string
+
+#Information Extraction Function
+
+
+
+with open('college.csv','rb') as f:
+    reader = csv.reader(f)
+    college_list = list(reader)
+'''ends here'''
+
+name=[]
+email=[]
+cpi=[]
+hsc=[]
+ssc=[]
+phone_number=[]
+institution=[]
+skills=[]
+
+length=0
+def getdata(filename):
+    resume_string = convert(filename)
+    resume_string1 = resume_string
+    resume_string = resume_string.replace(',',' ')
+
+    resume_string = resume_string.lower()
+    tokens = word_tokenize(resume_string1)
+    name.append(tokens[0] +" "+ tokens[1])
+    print(name[0])
+
+    y = extract_phone_numbers(resume_string)
+    y1 = []
+    for i in range(len(y)):
+        if(len(y[i])>9):
+            y1.append(y[i])
+    phone_number.append(y1[0])
+    print(phone_number[0])
+    
+
+    email.append(extract_email_addresses(resume_string)[0])
+    print(email[0])
+
+    scores=extract_decimals(resume_string)
+
+    ssc.append(scores[2])
+    hsc.append(scores[1])
+    cpi.append(scores[0])
+    
+
+    for college in college_list:
+        if college[0].lower() in resume_string:
+            institution.append(college[0])
+    print(institution[0])
+
+
+def getStatistics(string,field):
+    csvFileName = field + ".csv"
+    with open(csvFileName,'rb') as f:
+        reader = csv.reader(f)
+        parameter_list = list(reader)
+
+    hits = 0
+    paraList = []
+    for parameter in parameter_list:
+        if parameter[0] in string:
+            hits = hits + 1
+            paraList.append(parameter[0])
+    skills.append(hits)
+    print(skills[0])
+    print "The hit parameters are:"
+    print paraList
+
+
+
+
+#ends here
+
+# @app.route('/')
 # def index():
 # 	firstmember = Member.query.first()
 # 	return '<h1>The first member is:'+ firstmember.name +'</h1>'
- # Index
+# Index
+
+
 @app.route('/')
 def index():
 	return  render_template('home.html')
@@ -101,6 +248,28 @@ ALLOWED_EXTENSIONS = set(['pdf'])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+
+
+def pdf_folder(foldername):
+    for file in os.listdir(foldername):
+        if file.endswith(".pdf"):
+            file_name=os.path.join("/home/prachiti/Desktop/EventApp/Snoopy/pdfFolder", file)
+            
+
+
+def user_performance_graph():
+    my_path = '.'
+    with PdfPages(my_path + '/allpdf/multipage.pdf') as pdf:
+        given_title="user's performance"
+        y_axis=[6,98,95,9,10,15]
+        x_axis=['Github Repo','SSC','HSC','CPI','No of Projects','No of Skills']
+        ind=np.arange(len(x_axis))
+        plt.bar(ind,y_axis)
+        plt.xticks(ind,x_axis)
+        plt.title(given_title,color='r')
+        pdf.savefig()
+
 @app.route('/apply', methods=['GET', 'POST'])
 def apply():
 	if request.method == 'POST':
@@ -120,13 +289,33 @@ def apply():
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			# insert into db
+
+			foldername="/home/prachiti/Desktop/EventApp/Snoopy/pdfFolder/"
+			getdata(foldername+filename)
+			pdf_text=convert(foldername+filename)
+			getStatistics(pdf_text, "techAtt")
+
+			cur = mysql.connection.cursor()
+			cur1 = mysql.connection.cursor()
+			x=0
+			cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skills[x])+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0',0,'0')")
+			cur1.execute("commit")
+			flash("INSERTED")
+			
 			flash('Successfully Uploaded '+str(github_username), 'success')
 		else:
 			flash('Please upload a valid format', 'danger')
  	return render_template('apply.html')
 
 
+# @app.route('/insert')
+# def insert():
+#     cur = mysql.connection.cursor()
+#     cur1 = mysql.connection.cursor()
+#     x=0
+#     cur.execute("Insert into candidate_details Values('"+str(name[x])+"','"+str(email[x])+"','"+str(phone_number[x])+"','"+str(skills[x])+"','"+str(ssc[x])+"','"+str(hsc[x])+"','"+str(cpi[x])+"','"+str(institution[x])+"','0',0,'0')")
+#     cur1.execute("commit")
+#     return "INSERTED INTO DATABASE"
 
  # Check if user logged in
 def is_logged_in(f):
