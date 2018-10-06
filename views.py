@@ -377,9 +377,9 @@ def dashboard():
 	# Create cursor
 	cur = mysql.connection.cursor()
  	# Get articles
-	result = cur.execute("SELECT * FROM articles WHERE author=%s", (session['username'],))
+	cur.execute("select name,email,phone from candidate_details")
  	articles = cur.fetchall()
- 	if result > 0:
+ 	if articles > 0:
 		return render_template('dashboard.html', articles=articles)
 	else:
 		msg = 'No Articles Found'
@@ -435,12 +435,14 @@ def results():
 	# Create cursor
 	cur = mysql.connection.cursor()
  	# Get articles
-	result = cur.execute("SELECT * FROM articles WHERE author=%s", (session['username'],))
+	cur.execute("select NAME,EMAIL,PHONE,((8*CPI+4*HSC+3*SSC+10*No_of_followers+3*No_of_Repo+50*No_of_skills+10*skill_b+6*skill_d+4*skill_c)*'"+str(skilla)+"'+(8*CPI+4*HSC+3*SSC+10*No_of_followers+3*No_of_Repo+12*No_of_skills+50*skill_b+4*skill_d+1*skill_c)*'"+str(skillb)+"'+(8*CPI+4*HSC+3*SSC+10*No_of_followers+3*No_of_Repo+6*No_of_skills+10*skill_b+50*skill_d+6*skill_c)*'"+str(skillc)+"'+(8*CPI+4*HSC+3*SSC+10*No_of_followers+3*No_of_Repo+6*No_of_skills+4*skill_b+10*skill_d+50*skill_c)*'"+str(skilld)+"') as score from profile.candidate_details order by score desc limit 20") 
+	
+	flash("INSERTED")
  	articles = cur.fetchall()
- 	if result > 0:
+ 	if articles > 0:
 		return render_template('results.html', articles=articles)
 	else:
-		msg = 'No Articles Found'
+		msg = 'No Results Found'
 		return render_template('results.html', msg=msg)
 	# Close connection
 	cur.close()
