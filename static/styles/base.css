@@ -1,11 +1,11 @@
 body {
-  background: #333;
-  color: #fff;
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
 }
 
 .navbar {
-  border-bottom: #008ed6 3px solid;
-  opacity: 0.8; 
+  /* border-bottom: #000 3px solid; */
+  opacity: 1; 
 }
 
 .container {
@@ -13,8 +13,8 @@ body {
 }
 
 .btn-primary-outline {
-  background-color: transparent;
-  border-color: #fff;
+  background-color: #ffffff;
+  border-color: rgb(17, 21, 252);
 }
 
 .uploader-input {
