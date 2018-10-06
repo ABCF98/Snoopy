@@ -163,19 +163,60 @@ def dashboard():
 	cur.close()
 
  # Analyze
-@app.route('/analyze')
+@app.route('/analyze', methods=['GET', 'POST'])
 @is_logged_in
 def analyze():
+	if request.method == 'POST':
+		nop = request.form['nop']
+		skilla, skillb, skillc, skilld = 0, 0, 0, 0
+		if request.form.get('skilla'):
+			skilla = 1
+		if request.form.get('skillb'):
+			skillb = 1
+		if request.form.get('skillc'):
+			skillc = 1
+		if request.form.get('skilld'):
+			skilld = 1
+
+		# session['nop'] = nop
+		session['nop'], session['skilla'], session['skillb'], session['skillc'], session['skilld'] = nop, skilla, skillb, skillc, skilld
+
+		# flash(str(nop)+" "+str(skilla)+" "+str(skillb)+" "+str(skillc)+" "+str(skilld), 'success')
+		return redirect(url_for('results'))
+	# # Create cursor
+	# cur = mysql.connection.cursor()
+ 	# # Get articles
+	# result = cur.execute("SELECT * FROM articles WHERE author=%s", (session['username'],))
+ 	# articles = cur.fetchall()
+ 	# if result > 0:
+	# 	return render_template('analyze.html', articles=articles)
+	# else:
+	# 	msg = 'No Articles Found'
+	# 	return render_template('analyze.html', msg=msg)
+	# # Close connection
+	# cur.close()
+	
+	return render_template('analyze.html')
+
+ # Results
+@app.route('/results')
+@is_logged_in
+def results():
+
+	nop, skilla, skillb, skillc, skilld = session.get('nop'), session.get('skilla'), session.get('skillb'), session.get('skillc'), session.get('skilld', None)
+	flash(str(nop)+" "+str(skilla)+" "+str(skillb)+" "+str(skillc)+" "+str(skilld), 'success')
+	# flash('str(nop)', 'success')
+
 	# Create cursor
 	cur = mysql.connection.cursor()
  	# Get articles
 	result = cur.execute("SELECT * FROM articles WHERE author=%s", (session['username'],))
  	articles = cur.fetchall()
  	if result > 0:
-		return render_template('analyze.html', articles=articles)
+		return render_template('results.html', articles=articles)
 	else:
 		msg = 'No Articles Found'
-		return render_template('analyze.html', msg=msg)
+		return render_template('results.html', msg=msg)
 	# Close connection
 	cur.close()
 
