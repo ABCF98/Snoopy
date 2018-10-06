@@ -9,24 +9,24 @@
     <tr>
       <th>No.</th>
       <th>Name</th>
+      <th></th>
+      <th></th>
       <th>Uploaded At</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <!-- <th></th> -->
     </tr>
     {% for article in articles %}
       <tr>
         <td>{{article.id}}</td>
         <td>{{article.title}}</td>
-        <td>{{article.create_date}}</td>
         <td><a href="edit_article/{{article.id}}" class="btn btn-default pull-right">View Resume</a></td>
         <td><a href="edit_article/{{article.id}}" class="btn btn-default pull-right">View GitHub Profile</a></td>
-        <td>
+        <td>{{article.create_date}}</td>
+        <!-- <td>
           <form action="{{url_for('delete_article', id=article.id)}}" method="post">
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" value="Delete" class="btn btn-danger btn-sm">
           </form>
-        </td>
+        </td> -->
       </tr>
     {% endfor %}
   </table>

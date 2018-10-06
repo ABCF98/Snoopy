@@ -9,13 +9,15 @@
         <li class="nav-item">
           <a href="/about" class="nav-link">About</a>
         </li>
+        {% if not session.logged_in %}
         <li class="nav-item">
           <a href="/apply" class="nav-link">Apply</a>
         </li>
+        {% endif %}
+        {% if session.logged_in %}
         <li class="nav-item">
           <a href="/analyze" class="nav-link">Analyze</a>
         </li>
-        {% if session.logged_in %}
         <li class="nav-item">
           <a href="/dashboard" class="nav-link">Dashboard</a>
         </li>
