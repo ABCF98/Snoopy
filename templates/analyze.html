@@ -118,7 +118,7 @@
 
 <h4 class="text-right"> Welcome {{session.username}}</h4>
 <!-- <a class="btn btn-success" href="/add_article"> Add Article</a> -->
-<h2 class="text-right" style="color: #00FF00">Total Applicants: 243</h2>
+<h2 class="text-right" style="color: rgb(50, 158, 50)">Total Applicants: 243</h2>
 
 <div class="card btn-primary-outline">
   <div class="card-body">
@@ -128,15 +128,17 @@
         <div class="col-md-6">
           <div class="form-group">
             <label for="rate">No. of people needed</label>
-            <span id="rate-value" class="label bg-primary px-3 rounded float-right">1</span>
-            <input type="range" id="rate" class="custom-range" min="0.5" max="2" value="1" step="0.1">
+            <!-- <span id="rate-value" class="label bg-primary px-3 rounded float-right">1</span> -->
+            <input type="number" min="1">
+            <!-- <input type="range" id="rate" class="custom-range" min="0.5" max="2" value="1" step="0.1"> -->
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
             <label for="pitch">Experience in years</label>
-            <div id="pitch-value" class="label bg-primary px-3 rounded float-right">1</div>
-            <input type="range" id="pitch" class="custom-range" min="0" max="2" value="1" step="0.1">
+            <!-- <div id="pitch-value" class="label bg-primary px-3 rounded float-right">1</div> -->
+            <input type="number" min="1">
+            <!-- <input type="range" id="pitch" class="custom-range" min="0" max="2" value="1" step="0.1"> -->
           </div>
         </div>
       </div>
@@ -176,7 +178,7 @@
 
 <hr>
 <h2>Results</h2>
-<table class="table table-dark table-striped table-hover">
+<table class="table table-striped table-hover">
   <tr>
     <th>No.</th>
     <th>Name</th>
