@@ -310,7 +310,7 @@ def apply():
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-			foldername="/home/prachiti/Desktop/EventApp/Snoopy/pdfFolder/"
+			foldername="/home/jcs/Desktop/Snoopy/pdfFolder/"
 			getdata(foldername+filename)
 			pdf_text=convert(foldername+filename)
 			skillA = getStatistics(pdf_text, "techAtt")
